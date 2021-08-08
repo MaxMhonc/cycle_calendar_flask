@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        div {
+            text-align: center;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto auto auto;
+            grid-column-gap: 10px;
+            grid-row-gap: 10px;
+        }
+
+        .days_window {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto auto auto;
+            grid-column-gap: 10px;
+            grid-row-gap: 10px;
+        }
+
+        .month {
+            grid-column-start: 2;
+            grid-column-end: 7;
+            background: #9DA5C2;
+        }
+
+        .left-arrow, .right-arrow {
+            background: aquamarine;
+        }
+    </style>
+    <title>Title</title>
+</head>
+<body>
+
+<div class="grid-container">
+    <div class="left-arrow" onclick="monthStep('month_before')"><==</div>
+    <div class="month" id="month_title">data.month-data.year</div>
+    <div class="right-arrow" onclick="monthStep('month_after')">==></div>
+</div>
+
+<div class="days_window" id="days_window"></div>
+
+<script>
+
+    var month = JSON.parse('{{ data|safe }}');
+    var request = new XMLHttpRequest();
+
+    printMonth(month);
+
+    function getBeckColor(eventType) {
+        var backColorMaps = {
+            "default": "#DFBCF8",
+            "cycle_start": "#FA0707",
+            "predicted_start0": "#F99090",
+            "predicted_start1": "#F9A4A4",
+            "predicted_start2": "#FABBBB",
+            "predicted_start3": "#F9D3D3",
+            "predicted_start4": "#FBF2F2",
+            "cycle_middle": "#C8F37D"
+        }
+        var color
+        if (eventType === undefined) {
+            color = backColorMaps["default"]
+        } else {
+            color = backColorMaps[eventType]
+        }
+        return color
+    }
+
+    function printMonth(month) {
+        var monthTitle = document.getElementById("month_title")
+        monthTitle.innerHTML = month.month + month.year
+        for (let day of month["days"]) {
+            var item = document.createElement('div');
+            item.classList.add("item");
+            item.innerHTML = day["date"];
+            item.onclick = function () {
+                changeStartCycleDate(day["date"], day["events"][0]);
+            };
+            item.style.background = getBeckColor(day["events"][0]);
+            document.getElementById('days_window').appendChild(item)
+        }
+    }
+
+    function clearMonth() {
+        var container = document.getElementById('days_window');
+        while (container.hasChildNodes()) {
+            container.removeChild(container.lastChild);
+        }
+    }
+
+    function monthStep(direction) {
+        var response;
+        request.open('GET', 'http://127.0.0.1:5000/' + direction, false);
+        request.send();
+        response = request.responseText;
+        clearMonth();
+        printMonth(JSON.parse(response));
+    }
+
+    function changeStartCycleDate(date, eventType) {
+        var response;
+        if (eventType === "cycle_start") {
+            response = removeStartCycleDate(date)
+        } else {
+            response = setStartCycleDate(date)
+        }
+        clearMonth();
+        printMonth(JSON.parse(response));
+    }
+
+    function setStartCycleDate(date) {
+        request.open('POST', 'http://127.0.0.1:5000/set_cycle_start_date', false);
+        request.send(date);
+        return request.responseText;
+    }
+
+    function removeStartCycleDate(date) {
+        request.open('POST', 'http://127.0.0.1:5000/remove_cycle_start_date', false);
+        request.send(date);
+        return request.responseText;
+    }
+
+</script>
+
+</body>
+</html>

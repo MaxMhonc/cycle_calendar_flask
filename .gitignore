@@ -1,0 +1,16 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyCharm
+.idea/
+
+# Coverage information
+/.coverage
+/htmlcov/
+.pytest_cache/
+
+/venv/
+/app.db
+/to_do.py
