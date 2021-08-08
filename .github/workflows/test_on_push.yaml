@@ -7,8 +7,9 @@ on:
 jobs:
   run_tests:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       - name: Set up Python 3.8
       - uses: actions/setup-python@v1
