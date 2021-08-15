@@ -64,7 +64,9 @@ class CycleCalculator:
                 events[day] += ['cycle_middle']
             else:
                 events[day] = ['cycle_middle']
+
         print('AAAA!!!!! I WAE CALLED!!!!')
+        print(events)
         return events
 
     def _calculate_delta(self) -> timedelta:
@@ -83,6 +85,7 @@ class CycleCalculator:
             self, days_near: int = 0) -> Tuple[date, ...]:
         """Calculate predicted cycle start dates.
            days_near = 0 for most opportune start date."""
+        # ToDo: necessary string
         calculated_delta = self._calculate_delta()
         days_near = timedelta(days=days_near)
         if not self.last_cycle_date:

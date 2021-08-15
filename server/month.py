@@ -2,25 +2,27 @@ import calendar
 from calendar import Calendar
 from datetime import datetime, date
 from typing import Iterable, List, Dict, Any, Union, Optional
+from weakref import WeakValueDictionary
 
 from server.models import Date, CycleEvent
 from server.cycle_calculator import CycleCalculator
 
 
-def singleton(class_):
-    instances = {}
+# def singleton(class_):
+#     instances = {}
+#     # instances = WeakValueDictionary()
+#
+#     def getinstance(*args, **kwargs):
+#         # ToDo: remove this bullshit
+#         print('<><><><><><><>< I WAS CALLED ><><><><><><><>')
+#         if class_ not in instances:
+#             instances[class_] = class_(*args, **kwargs)
+#         return instances[class_]
+#
+#     return getinstance
 
-    def getinstance(*args, **kwargs):
-        # ToDo: remove this bullshit
-        print('<><><><><><><>< I WAS CALLED ><><><><><><><>')
-        if class_ not in instances:
-            instances[class_] = class_(*args, **kwargs)
-        return instances[class_]
 
-    return getinstance
-
-
-@singleton
+# @singleton
 class Month:
     """
     Month-class is responsible for providing info about month to UI
@@ -54,7 +56,10 @@ class Month:
 
     @staticmethod
     def _convert_date(event_date):
-        """Convert event date to appropriate for date_class format"""
+        """
+        Convert event date to appropriate for date_class format
+        2021-5-9 -> date(2021, 5, 9)
+        """
         return date(*map(int, event_date.split('-')))
 
     def _get_current_year_month(self) -> Iterable[int]:
@@ -63,10 +68,11 @@ class Month:
 
     def _update_dates_events(self):
         """Update date-events after changes"""
-        return self._get_dates_events()
+        self.dates_events = self._get_dates_events()
 
     def _get_dates_events(self) -> Dict[date, List[str]]:
         """Returns dates and lists of events for them"""
+        # ToDo: smells like long method and Comments
 
         def dict_union(
                 dict1: Dict[Any, List], dict2: Dict[Any, List]

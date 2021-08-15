@@ -28,6 +28,7 @@ class Date(db.Model):
         Create Date instance for new_date, create relation with event_type,
         commit to DB.
         """
+        # ToDo: if data already in DB?
         date_to_set = cls(date_=new_date)
         event = CycleEvent.query.filter(CycleEvent.type_ == event_type).first()
         date_to_set.cycle_event.append(event)
