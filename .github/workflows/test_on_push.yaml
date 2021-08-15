@@ -22,5 +22,7 @@ jobs:
 
       - name: Run tests
         run: coverage run --omit 'venv/*' -m unittest
+             echo "********* Tests are passed **********"
+
       - name: Tests report
         run: coverage report
