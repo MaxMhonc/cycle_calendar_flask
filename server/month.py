@@ -62,49 +62,61 @@ class Month:
         """
         return date(*map(int, event_date.split('-')))
 
+    @staticmethod
+    def _dict_union(
+            dict1: Dict[Any, List], dict2: Dict[Any, List]
+    ) -> Dict[Any, List]:
+        """
+        Takes two dicts with lists as value.
+        Returns merged dict If taken dicts have some equal keys,
+        in result dict, value for those keys will be sum of lists-values.
+        """
+        keys = set(list(dict1) + list(dict2))
+        union_dict = {
+            key: (dict1.get(key) or []) + (dict2.get(key) or []) for key
+            in keys
+        }
+        return union_dict
+
+    @staticmethod
+    def _extract_start_cycle_dates(
+            dates_events: Dict[date, List[str]]
+    ) -> List[date]:
+        """Create list of cycle start dates"""
+        return [
+            day for day, events in dates_events.items()
+            if 'cycle_start' in events
+        ]
+
     def _get_current_year_month(self) -> Iterable[int]:
         """Get start values for month and year"""
         return map(int, self.date_now.strftime('%Y %m').split())
 
-    def _update_dates_events(self):
+    def _update_dates_events(self) -> None:
         """Update date-events after changes"""
         self.dates_events = self._get_dates_events()
 
-    def _get_dates_events(self) -> Dict[date, List[str]]:
-        """Returns dates and lists of events for them"""
-        # ToDo: smells like long method and Comments
-
-        def dict_union(
-                dict1: Dict[Any, List], dict2: Dict[Any, List]
-        ) -> Dict[Any, List]:
-            """
-            Takes two dicts with lists as value.
-            Returns merged dict If taken dicts have some equal keys,
-            in result dict, value for those keys will be sum of lists-values.
-            """
-            keys = set(list(dict1) + list(dict2))
-            union_dict = {
-                key: (dict1.get(key) or []) + (dict2.get(key) or []) for key
-                in keys
-            }
-            return union_dict
-
-        # get dates and events for them from db
-        dates_events = {
+    def _get_db_dates_events(self) -> Dict[date, List[str]]:
+        """Get dates and events for them from db"""
+        return {
             day.date_: self.event_class.repr_from_list(day.cycle_event)
             for day in self.date_class.get_dates()
         }
-        # extract start-cycle dates
-        start_cycle_dates = [
-            day for day, events in dates_events.items()
-            if 'cycle_start' in events
-        ]
-        # get date-events of predicted cycle-events
-        predicted_cycle_events = self.calculator(
-            start_cycle_dates
+
+    def _get_predicted_cycle_events(
+            self, dates_events: Dict[date, List[str]]
+    ) -> Dict[date, List[str]]:
+        """Get date-events for predicted cycle-events"""
+        return self.calculator(
+            self._extract_start_cycle_dates(dates_events)
         ).get_predicted_events()
-        res = dict_union(dates_events, predicted_cycle_events)
-        return res
+
+    def _get_dates_events(self) -> Dict[date, List[str]]:
+        """Returns dates and lists of events for them"""
+        dates_events = self._get_db_dates_events()
+        return self._dict_union(
+            dates_events, self._get_predicted_cycle_events(dates_events)
+        )
 
     def _get_dates(self) -> List[date]:
         """Create list of dates for the one month"""

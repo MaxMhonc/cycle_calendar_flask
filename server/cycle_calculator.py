@@ -85,7 +85,6 @@ class CycleCalculator:
             self, days_near: int = 0) -> Tuple[date, ...]:
         """Calculate predicted cycle start dates.
            days_near = 0 for most opportune start date."""
-        # ToDo: necessary string
         calculated_delta = self._calculate_delta()
         days_near = timedelta(days=days_near)
         if not self.last_cycle_date:
