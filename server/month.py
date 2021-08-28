@@ -42,6 +42,9 @@ class Month:
     For calculating predicted cycle dates - 'calculator'
     """
 
+    # ToDo: implement "Replace Data Value with Object"
+    #       or "Replace Data Value with Object"
+
     def __init__(
             self,
             date_class, event_class, calculator, calendar_handler, date_now
@@ -192,3 +195,17 @@ class Month:
             'year': self.year
         }
         return data
+
+
+if __name__ == '__main__':
+    # ToDo: remove this code
+    from server.models import Date, CycleEvent
+    from server.cycle_calculator import CycleCalculator
+    from calendar import Calendar
+    from app import app
+
+    with app.app_context():
+        m = Month(
+            Date, CycleEvent, CycleCalculator, Calendar, date.today()
+        )
+        print(m.__dict__)
