@@ -15,3 +15,5 @@ class Config:
     AVERAGE_DAYS_PERIOD = 27
     # average period before the middle of the cycle
     MIDDLE_START = 10
+
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev secret key'

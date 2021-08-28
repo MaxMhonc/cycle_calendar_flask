@@ -26,6 +26,9 @@ class CycleCalculator:
         'predicted_start4'
     )
 
+    # ToDo: take const from config
+    # ToDo: implement "Replace Data Value with Object"
+    #       or "Replace Data Value with Object"
     def __init__(
             self,
             dates_range: List[Optional[date]],
@@ -64,7 +67,9 @@ class CycleCalculator:
                 events[day] += ['cycle_middle']
             else:
                 events[day] = ['cycle_middle']
+
         print('AAAA!!!!! I WAE CALLED!!!!')
+        print(events)
         return events
 
     def _calculate_delta(self) -> timedelta:
