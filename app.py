@@ -19,4 +19,5 @@ def make_shell_context():
 
 
 if __name__ == '__main__':
+    # ToDo: remove it
     app.run()
